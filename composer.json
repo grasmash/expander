@@ -1,6 +1,6 @@
 {
     "name": "grasmash/expander",
-    "description": "Expands internal property references in a yaml file.",
+    "description": "Expands internal property references in PHP arrays file.",
     "type": "library",
     "require": {
         "php": ">=5.4",
