@@ -25,6 +25,7 @@ $array = [
         'protaganist' => '${characters.0.name}',
         'media' => [
             0 => 'hardcover',
+            1 => 'paperback',
         ],
         'nested-reference' => '${book.sequel}',
     ],
@@ -59,54 +60,90 @@ $array = [
     'env-test' => '${env.test}',
 ];
 
+$expander = new Expander();
+// Optionally set a logger.
+$expander->setLogger(new Psr\Log\NullLogger());
+// Optionally set a Stringfier, used to convert array placeholders into strings. Defaults to using implode() with `,` delimeter.
+// @see StringifierInterface.
+$expander->setStringifier(new Grasmash\Expander\Stringifier());
+
 // Parse an array, expanding internal property references.
-$expanded = \Grasmash\Expander\Expander::expandArrayProperties($array);
-print_r($expanded);
+$expanded = $expander->expandArrayProperties($array);
 
 // Parse an array, expanding references using both internal and supplementary values.
-$reference_properties = ['book' => ['publication-year' => 1965]];
-$expanded = \Grasmash\Expander\Expander::expandArrayProperties($array, $reference_properties);
+$reference_properties =  'book' => ['sequel' => 'Dune Messiah'];
+// Set an environmental variable.
+putenv("test=gomjabbar");
+$expanded = $expander->expandArrayProperties($array, $reference_properties);
+
 print_r($expanded);
 ````
 
 Resultant array:
 
 ```php
-<?php
+Array
+(
+    [type] => book
+    [book] => Array
+        (
+            [title] => Dune
+            [author] => Frank Herbert
+            [copyright] => Frank Herbert 1965
+            [protaganist] => Paul Atreides
+            [media] => Array
+                (
+                    [0] => hardcover
+                    [1] => paperback
+                )
 
-array (
-  'type' => 'book',
-  'book' => 
-  array (
-    'title' => 'Dune',
-    'author' => 'Frank Herbert',
-    'copyright' => 'Frank Herbert 1965',
-    'protaganist' => 'Paul Atreides',
-    'media' => 
-    array (
-      0 => 'hardcover',
-    ),
-  ),
-  'characters' => 
-  array (
-    0 => 
-    array (
-      'name' => 'Paul Atreides',
-      'occupation' => 'Kwisatz Haderach',
-      'aliases' => 
-      array (
-        0 => 'Usul',
-        1 => 'Muad\'Dib',
-        2 => 'The Preacher',
-      ),
-    ),
-    1 => 
-    array (
-      'name' => 'Duncan Idaho',
-      'occupation' => 'Swordmaster',
-    ),
-  ),
-  'summary' => 'Dune by Frank Herbert',
-  'product-name' => 'Dune',
-);
+            [nested-reference] => Dune Messiah
+        )
+
+    [characters] => Array
+        (
+            [0] => Array
+                (
+                    [name] => Paul Atreides
+                    [occupation] => Kwisatz Haderach
+                    [aliases] => Array
+                        (
+                            [0] => Usul
+                            [1] => Muad'Dib
+                            [2] => The Preacher
+                        )
+
+                )
+
+            [1] => Array
+                (
+                    [name] => Duncan Idaho
+                    [occupation] => Swordmaster
+                )
+
+        )
+
+    [summary] => Dune by Frank Herbert
+    [publisher] => ${not.real.property}
+    [sequels] => Dune Messiah, and others.
+    [available-products] => paperback, hardcover
+    [product-name] => Dune
+    [boolean-value] => 1
+    [null-value] =>
+    [inline-array] => Array
+        (
+            [0] => one
+            [1] => two
+            [2] => three
+        )
+
+    [expand-array] => one,two,three
+    [env-test] => gomjabbar
+    [env] => Array
+        (
+            [test] => gomjabbar
+        )
+
+)
+
 ```
