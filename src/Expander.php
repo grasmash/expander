@@ -3,36 +3,61 @@
 namespace Grasmash\Expander;
 
 use Dflydev\DotAccessData\Data;
-use Symfony\Component\Yaml\Yaml;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\NullLogger;
 
 /**
  * Class Expander
  * @package Grasmash\Expander
  */
-class Expander
+class Expander implements LoggerAwareInterface
 {
-
     /**
-     * Parses a YAML string and expands property placeholders.
-     *
-     * Placeholders should formatted as ${parent.child}.
-     *
-     * @param string $yaml_string
-     *   A string of YAML.
-     * @param array $reference_array
-     *   Optional. An array of reference values. This is not operated upon but is used as a
-     *   reference to provide supplemental values for property expansion.
-     *
-     * @return array
-     *   The modified array in which placeholders have been replaced with
-     *   values.
+     * @var \Grasmash\Expander\StringifierInterface
      */
-    public static function parse($yaml_string, $reference_array = [])
+    protected $stringifier;
+    /**
+     * @var \Psr\Log\LoggerInterface
+     */
+    protected $logger;
+
+    public function __construct()
     {
-        $array = Yaml::parse($yaml_string);
-        return self::expandArrayProperties($array, $reference_array);
+        $this->setLogger(new NullLogger());
+        $this->setStringifier(new Stringifier());
     }
 
+    /**
+     * @return \Grasmash\Expander\StringifierInterface
+     */
+    public function getStringifier(): \Grasmash\Expander\StringifierInterface
+    {
+        return $this->stringifier;
+    }
+
+    /**
+     * @param \Grasmash\Expander\StringifierInterface $stringifier
+     */
+    public function setStringifier(\Grasmash\Expander\StringifierInterface $stringifier)
+    {
+        $this->stringifier = $stringifier;
+    }
+
+    /**
+     * @return \Psr\Log\LoggerInterface
+     */
+    public function getLogger(): \Psr\Log\LoggerInterface
+    {
+        return $this->logger;
+    }
+
+    /**
+     * @param \Psr\Log\LoggerInterface $logger
+     */
+    public function setLogger(\Psr\Log\LoggerInterface $logger)
+    {
+        $this->logger = $logger;
+    }
 
     /**
      * Expands property placeholders in an array.
@@ -46,14 +71,14 @@ class Expander
      *   The modified array in which placeholders have been replaced with
      *   values.
      */
-    public static function expandArrayProperties($array, $reference_array = [])
+    public function expandArrayProperties($array, $reference_array = [])
     {
         $data = new Data($array);
         if ($reference_array) {
             $reference_data = new Data($reference_array);
-            self::doExpandArrayProperties($data, $array, '', $reference_data);
+            $this->doExpandArrayProperties($data, $array, '', $reference_data);
         } else {
-            self::doExpandArrayProperties($data, $array);
+            $this->doExpandArrayProperties($data, $array);
         }
 
         return $data->export();
@@ -73,7 +98,7 @@ class Expander
      *   A reference data object. This is not operated upon but is used as a
      *   reference to provide supplemental values for property expansion.
      */
-    protected static function doExpandArrayProperties(
+    protected function doExpandArrayProperties(
         $data,
         $array,
         $parent_keys = '',
@@ -86,10 +111,10 @@ class Expander
             }
             // Recursive case.
             if (is_array($value)) {
-                self::doExpandArrayProperties($data, $value, $parent_keys . "$key.", $reference_data);
+                $this->doExpandArrayProperties($data, $value, $parent_keys . "$key.", $reference_data);
             } // Base case.
             else {
-                self::expandStringProperties($data, $parent_keys, $reference_data, $value, $key);
+                $this->expandStringProperties($data, $parent_keys, $reference_data, $value, $key);
             }
         }
     }
@@ -112,7 +137,7 @@ class Expander
      *
      * @return mixed
      */
-    protected static function expandStringProperties(
+    protected function expandStringProperties(
         $data,
         $parent_keys,
         $reference_data,
@@ -126,7 +151,7 @@ class Expander
             $value = preg_replace_callback(
                 '/\$\{([^\$}]+)\}/',
                 function ($matches) use ($data, $reference_data) {
-                    return self::expandStringPropertiesCallback(
+                    return $this->expandStringPropertiesCallback(
                         $matches,
                         $data,
                         $reference_data
@@ -165,7 +190,7 @@ class Expander
      *
      * @return mixed
      */
-    public static function expandStringPropertiesCallback(
+    public function expandStringPropertiesCallback(
         $matches,
         $data,
         $reference_data = null
@@ -175,10 +200,10 @@ class Expander
 
         // Use only values within the subject array's data.
         if (!$reference_data) {
-            return self::expandProperty($property_name, $unexpanded_value, $data);
+            return $this->expandProperty($property_name, $unexpanded_value, $data);
         } // Search both the subject array's data and the reference data for a value.
         else {
-            return self::expandPropertyWithReferenceData(
+            return $this->expandPropertyWithReferenceData(
                 $property_name,
                 $unexpanded_value,
                 $data,
@@ -203,13 +228,13 @@ class Expander
      * @return string
      *   The expanded string.
      */
-    public static function expandPropertyWithReferenceData(
+    public function expandPropertyWithReferenceData(
         $property_name,
         $unexpanded_value,
         $data,
         $reference_data
     ) {
-        $expanded_value = self::expandProperty(
+        $expanded_value = $this->expandProperty(
             $property_name,
             $unexpanded_value,
             $data
@@ -217,7 +242,7 @@ class Expander
         // If the string was not changed using the subject data, try using
         // the reference data.
         if ($expanded_value == $unexpanded_value) {
-            $expanded_value = self::expandProperty(
+            $expanded_value = $this->expandProperty(
                 $property_name,
                 $unexpanded_value,
                 $reference_data
@@ -239,7 +264,7 @@ class Expander
      *
      * @return mixed
      */
-    public static function expandProperty($property_name, $unexpanded_value, $data)
+    public function expandProperty($property_name, $unexpanded_value, $data)
     {
         if (strpos($property_name, "env.") === 0 &&
           !$data->has($property_name)) {
@@ -250,15 +275,15 @@ class Expander
         }
 
         if (!$data->has($property_name)) {
-            self::log("Property \${'$property_name'} could not be expanded.");
+            $this->log("Property \${'$property_name'} could not be expanded.");
             return $unexpanded_value;
         } else {
             $expanded_value = $data->get($property_name);
             if (is_array($expanded_value)) {
-                $expanded_value = Yaml::dump($expanded_value, 0);
+                $expanded_value = $this->getStringifier()::stringifyArray($expanded_value);
                 return $expanded_value;
             }
-            self::log("Expanding property \${'$property_name'} => $expanded_value.");
+            $this->log("Expanding property \${'$property_name'} => $expanded_value.");
             return $expanded_value;
         }
     }
@@ -266,8 +291,10 @@ class Expander
     /**
      * @param $message
      */
-    public static function log($message)
+    public function log($message)
     {
-        // print "$message\n";
+        if ($this->getLogger()) {
+            $this->getLogger()->debug($message);
+        }
     }
 }
