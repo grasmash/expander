@@ -289,7 +289,10 @@ class Expander implements LoggerAwareInterface
     }
 
     /**
-     * @param $message
+     * Logs a message using the logger.
+     *
+     * @param string $message
+     *   The message to log.
      */
     public function log($message)
     {
