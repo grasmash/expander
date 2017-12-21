@@ -30,7 +30,7 @@ class Expander implements LoggerAwareInterface
     /**
      * @return \Grasmash\Expander\StringifierInterface
      */
-    public function getStringifier(): \Grasmash\Expander\StringifierInterface
+    public function getStringifier()
     {
         return $this->stringifier;
     }
@@ -46,7 +46,7 @@ class Expander implements LoggerAwareInterface
     /**
      * @return \Psr\Log\LoggerInterface
      */
-    public function getLogger(): \Psr\Log\LoggerInterface
+    public function getLogger()
     {
         return $this->logger;
     }
@@ -280,7 +280,7 @@ class Expander implements LoggerAwareInterface
         } else {
             $expanded_value = $data->get($property_name);
             if (is_array($expanded_value)) {
-                $expanded_value = $this->getStringifier()::stringifyArray($expanded_value);
+                $expanded_value = $this->getStringifier()->stringifyArray($expanded_value);
                 return $expanded_value;
             }
             $this->log("Expanding property \${'$property_name'} => $expanded_value.");
