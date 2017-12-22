@@ -1,7 +1,9 @@
 [![Build Status](https://travis-ci.org/grasmash/expander.svg?branch=master)](https://travis-ci.org/grasmash/expander) [![Packagist](https://img.shields.io/packagist/v/grasmash/expander.svg)](https://packagist.org/packages/grasmash/expander)
 [![Total Downloads](https://poser.pugx.org/grasmash/expander/downloads)](https://packagist.org/packages/grasmash/expander) [![Coverage Status](https://coveralls.io/repos/github/grasmash/expander/badge.svg?branch=master)](https://coveralls.io/github/grasmash/expander?branch=master)
 
-This tool expands property references in PHP arrays. For example implementation, see Yaml Expander.
+This tool expands dot-notated, string property references into their corresponding values. This is useful for run time expansion of property references in configuration files.
+
+For example implementation, see [Yaml Expander](https://github.com/grasmash/yaml-expander).
 
 ### Installation
 
