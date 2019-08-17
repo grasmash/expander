@@ -111,7 +111,7 @@ Array
                     [aliases] => Array
                         (
                             [0] => Usul
-                            [1] => Muad'Dib
+                            [1] => Muad\'Dib
                             [2] => The Preacher
                         )
 
