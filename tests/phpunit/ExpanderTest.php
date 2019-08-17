@@ -15,7 +15,7 @@ class ExpanderTest extends \PHPUnit_Framework_TestCase
      * @param array $array
      * @param array $reference_array
      *
-     * @dataProvider providerYaml
+     * @dataProvider providerSourceData
      */
     public function testExpandArrayProperties(array $array, array $reference_array)
     {
@@ -40,7 +40,7 @@ class ExpanderTest extends \PHPUnit_Framework_TestCase
      * @return array
      *   An array of values to test.
      */
-    public function providerYaml()
+    public function providerSourceData()
     {
         return [
           [
