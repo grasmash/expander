@@ -52,6 +52,7 @@ $array = [
     'available-products' => '${book.media.1}, ${book.media.0}',
     'product-name' => '${${type}.title}',
     'boolean-value' => true,
+    'expand-boolean' => '${boolean-value}',
     'null-value' => NULL,
     'inline-array' => [
         0 => 'one',
@@ -130,7 +131,8 @@ Array
     [sequels] => Dune Messiah, and others.
     [available-products] => paperback, hardcover
     [product-name] => Dune
-    [boolean-value] => 1
+    [boolean-value] => true,
+    [expand-boolean] => true,
     [null-value] =>
     [inline-array] => Array
         (
