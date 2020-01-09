@@ -145,43 +145,53 @@ class Expander implements LoggerAwareInterface
         $key
     ) {
         $pattern = '/\$\{([^\$}]+)\}/';
-        // We loop through all placeholders in a given string.
-        // E.g., '${placeholder1} ${placeholder2}' requires two replacements.
-        while (strpos($value, '${') !== false) {
-            $original_value = $value;
-            $value = preg_replace_callback(
-                $pattern,
-                function ($matches) use ($data, $reference_data) {
+        // If the value was just a _single_ placeholder, we have the opportunity to preserve the data type.
+        $matches_found = preg_match($pattern, $value, $matches);
+        if ($matches_found && $matches[0] === $value) {
+            $value = $this->expandStringPropertiesCallback($matches, $data, $reference_data);
+            $this->setValue($data, $parent_keys, $value, $key);
+        // If there are either multiple placeholders or a placeholder plus a string, handle it differently.
+        } else {
+            // We loop through all placeholders in a given string.
+            // E.g., '${placeholder1} ${placeholder2}' requires two replacements.
+            while (strpos($value, '${') !== false) {
+                $original_value = $value;
+                $value = preg_replace_callback($pattern, function ($matches) use ($data, $reference_data) {
                     return $this->expandStringPropertiesCallback($matches, $data, $reference_data);
-                },
-                $value,
-                -1,
-                $count
-            );
+                }, $value, -1, $count);
 
-            // If the value was just a _single_ property reference, we have the opportunity to preserve the data type.
-            if ($count === 1) {
-                preg_match($pattern, $original_value, $matches);
-                if ($matches[0] === $original_value) {
-                    $value = $this->expandStringPropertiesCallback($matches, $data, $reference_data);
+                // If no replacement occurred at all, break to prevent infinite loop.
+                if ($original_value === $value) {
+                    break;
                 }
+                $this->setValue($data, $parent_keys, $value, $key);
             }
-
-            // If no replacement occurred at all, break to prevent
-            // infinite loop.
-            if ($original_value === $value) {
-                break;
-            }
-
-            // Set value on $data object.
-            if ($parent_keys) {
-                $full_key = $parent_keys . "$key";
-            } else {
-                $full_key = $key;
-            }
-            $data->set($full_key, $value);
         }
         return $value;
+    }
+
+    /**
+     * Set the value with the correct key.
+     *
+     * @param Data $data
+     *   A data object, containing the $array.
+     * @param string $parent_keys
+     *   The parent keys of the current key in dot notation. This is used to
+     *   track the absolute path to the current key in recursive cases.
+     * @param string $value
+     *   The unexpanded property value.
+     * @param string $key
+     *   The immediate key of the property.
+     */
+    protected function setValue($data, $parent_keys, $value, $key)
+    {
+        // Set value on $data object.
+        if ($parent_keys) {
+            $full_key = $parent_keys . (string) $key;
+        } else {
+            $full_key = $key;
+        }
+        $data->set($full_key, $value);
     }
 
     /**
