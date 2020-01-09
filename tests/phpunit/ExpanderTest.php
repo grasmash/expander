@@ -31,6 +31,11 @@ class ExpanderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals('Dune', $expanded['product-name']);
         $this->assertEquals(Stringifier::stringifyArray($array['inline-array']), $expanded['expand-array']);
 
+        $this->assertEquals(true, $expanded['boolean-value']);
+        $this->assertInternalType('boolean', $expanded['boolean-value']);
+        $this->assertEquals(true, $expanded['expand-boolean']);
+        $this->assertInternalType('boolean', $expanded['expand-boolean']);
+
         $expanded = $expander->expandArrayProperties($array, $reference_array);
         $this->assertEquals('Dune Messiah, and others.', $expanded['sequels']);
         $this->assertEquals('Dune Messiah', $expanded['book']['nested-reference']);
@@ -77,6 +82,7 @@ class ExpanderTest extends \PHPUnit_Framework_TestCase
               'available-products' => '${book.media.1}, ${book.media.0}',
               'product-name' => '${${type}.title}',
               'boolean-value' => true,
+              'expand-boolean' => '${boolean-value}',
               'null-value' => null,
               'inline-array' => [
                 0 => 'one',
