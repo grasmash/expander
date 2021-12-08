@@ -5,8 +5,9 @@ namespace Grasmash\Expander\Tests\Command;
 use Dflydev\DotAccessData\Data;
 use Grasmash\Expander\Expander;
 use Grasmash\Expander\Stringifier;
+use PHPUnit\Framework\TestCase;
 
-class ExpanderTest extends \PHPUnit_Framework_TestCase
+class ExpanderTest extends TestCase
 {
 
     /**
@@ -32,9 +33,9 @@ class ExpanderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(Stringifier::stringifyArray($array['inline-array']), $expanded['expand-array']);
 
         $this->assertEquals(true, $expanded['boolean-value']);
-        $this->assertInternalType('boolean', $expanded['boolean-value']);
+        $this->assertIsBool($expanded['boolean-value']);
         $this->assertEquals(true, $expanded['expand-boolean']);
-        $this->assertInternalType('boolean', $expanded['expand-boolean']);
+        $this->assertIsBool($expanded['expand-boolean']);
 
         $expanded = $expander->expandArrayProperties($array, $reference_array);
         $this->assertEquals('Dune Messiah, and others.', $expanded['sequels']);
