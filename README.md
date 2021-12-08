@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/grasmash/expander.svg?branch=master)](https://travis-ci.org/grasmash/expander) [![Packagist](https://img.shields.io/packagist/v/grasmash/expander.svg)](https://packagist.org/packages/grasmash/expander)
+[![Build Status](https://app.travis-ci.com/grasmash/expander.svg?branch=master)](https://app.travis-ci.com/grasmash/expander) [![Packagist](https://img.shields.io/packagist/v/grasmash/expander.svg)](https://packagist.org/packages/grasmash/expander)
 [![Total Downloads](https://poser.pugx.org/grasmash/expander/downloads)](https://packagist.org/packages/grasmash/expander) [![Coverage Status](https://coveralls.io/repos/github/grasmash/expander/badge.svg?branch=master)](https://coveralls.io/github/grasmash/expander?branch=master)
 
 This tool expands dot-notated, string property references into their corresponding values. This is useful for run time expansion of property references in configuration files.
