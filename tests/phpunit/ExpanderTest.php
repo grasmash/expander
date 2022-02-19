@@ -22,7 +22,8 @@ class ExpanderTest extends TestCase
     {
         $expander = new Expander();
 
-        putenv("test=gomjabbar");
+        $this->setEnvVarFixture('test', 'gomjabbar');
+
         $expanded = $expander->expandArrayProperties($array);
         $this->assertEquals('gomjabbar', $expanded['env-test']);
         $this->assertEquals('Frank Herbert 1965', $expanded['book']['copyright']);
@@ -125,5 +126,11 @@ class ExpanderTest extends TestCase
             [ ['author' => 'Frank Herbert'], 'author', '${author}', 'Frank Herbert' ],
             [ ['book' =>  ['author' => 'Frank Herbert' ]], 'book.author', '${book.author}', 'Frank Herbert' ],
         ];
+    }
+
+    protected function setEnvVarFixture($key, $value)
+    {
+        putenv("$key=$value");
+        $_SERVER[$key] = $value;
     }
 }

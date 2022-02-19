@@ -112,8 +112,8 @@ class Expander implements LoggerAwareInterface
             // Recursive case.
             if (is_array($value)) {
                 $this->doExpandArrayProperties($data, $value, $parent_keys . "$key.", $reference_data);
-            } // Base case.
-            else {
+            } else {
+                // Base case.
                 $this->expandStringProperties($data, $parent_keys, $reference_data, $value, $key);
             }
         }
@@ -208,8 +208,8 @@ class Expander implements LoggerAwareInterface
         // Use only values within the subject array's data.
         if (!$reference_data) {
             return $this->expandProperty($property_name, $unexpanded_value, $data);
-        } // Search both the subject array's data and the reference data for a value.
-        else {
+        } else {
+            // Search both the subject array's data and the reference data for a value.
             return $this->expandPropertyWithReferenceData(
                 $property_name,
                 $unexpanded_value,
@@ -276,8 +276,8 @@ class Expander implements LoggerAwareInterface
         if (strpos($property_name, "env.") === 0 &&
           !$data->has($property_name)) {
             $env_key = substr($property_name, 4);
-            if (isset($_ENV[$env_key])) {
-              $data->set($property_name, $_ENV[$env_key]);
+            if (isset($_SERVER[$env_key])) {
+                $data->set($property_name, $_SERVER[$env_key]);
             }
         }
 
