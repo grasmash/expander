@@ -132,6 +132,5 @@ class ExpanderTest extends TestCase
     {
         putenv("$key=$value");
         $_SERVER[$key] = $value;
-
     }
 }
