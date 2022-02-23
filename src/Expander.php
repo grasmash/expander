@@ -147,7 +147,7 @@ class Expander implements LoggerAwareInterface
         $pattern = '/\$\{([^\$}]+)\}/';
         // We loop through all placeholders in a given string.
         // E.g., '${placeholder1} ${placeholder2}' requires two replacements.
-        while (strpos($value, '${') !== false) {
+        while (strpos((string)$value, '${') !== false) {
             $original_value = $value;
             $value = preg_replace_callback(
                 $pattern,
