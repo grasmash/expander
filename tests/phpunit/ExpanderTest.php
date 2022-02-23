@@ -93,10 +93,12 @@ class ExpanderTest extends TestCase
               ],
               'expand-array' => '${inline-array}',
               'env-test' => '${env.test}',
+              'test_expanded_to_null' => '${book.expanded_to_null}'
             ],
             [
               'book' => [
-                'sequel' => 'Dune Messiah'
+                'sequel' => 'Dune Messiah',
+                'expanded_to_null' => null,
               ]
             ]
           ],
