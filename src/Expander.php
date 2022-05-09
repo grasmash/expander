@@ -4,6 +4,7 @@ namespace Grasmash\Expander;
 
 use Dflydev\DotAccessData\Data;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 
 /**
@@ -15,11 +16,11 @@ class Expander implements LoggerAwareInterface
     /**
      * @var \Grasmash\Expander\StringifierInterface
      */
-    protected $stringifier;
+    protected StringifierInterface $stringifier;
     /**
      * @var \Psr\Log\LoggerInterface
      */
-    protected $logger;
+    protected LoggerInterface $logger;
 
     public function __construct()
     {
@@ -30,7 +31,7 @@ class Expander implements LoggerAwareInterface
     /**
      * @return \Grasmash\Expander\StringifierInterface
      */
-    public function getStringifier()
+    public function getStringifier(): StringifierInterface
     {
         return $this->stringifier;
     }
@@ -38,7 +39,7 @@ class Expander implements LoggerAwareInterface
     /**
      * @param \Grasmash\Expander\StringifierInterface $stringifier
      */
-    public function setStringifier(\Grasmash\Expander\StringifierInterface $stringifier)
+    public function setStringifier(StringifierInterface $stringifier)
     {
         $this->stringifier = $stringifier;
     }
@@ -46,7 +47,7 @@ class Expander implements LoggerAwareInterface
     /**
      * @return \Psr\Log\LoggerInterface
      */
-    public function getLogger()
+    public function getLogger(): LoggerInterface
     {
         return $this->logger;
     }
@@ -54,7 +55,7 @@ class Expander implements LoggerAwareInterface
     /**
      * @param \Psr\Log\LoggerInterface $logger
      */
-    public function setLogger(\Psr\Log\LoggerInterface $logger): void
+    public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;
     }
@@ -62,7 +63,7 @@ class Expander implements LoggerAwareInterface
     /**
      * Expands property placeholders in an array.
      *
-     * Placeholders should formatted as ${parent.child}.
+     * Placeholders should be formatted as ${parent.child}.
      *
      * @param array $array
      *   An array containing properties to expand.
@@ -71,7 +72,7 @@ class Expander implements LoggerAwareInterface
      *   The modified array in which placeholders have been replaced with
      *   values.
      */
-    public function expandArrayProperties($array, $reference_array = [])
+    public function expandArrayProperties(array $array, $reference_array = []): array
     {
         $data = new Data($array);
         if ($reference_array) {
@@ -99,10 +100,10 @@ class Expander implements LoggerAwareInterface
      *   reference to provide supplemental values for property expansion.
      */
     protected function doExpandArrayProperties(
-        $data,
-        $array,
-        $parent_keys = '',
-        $reference_data = null
+        Data   $data,
+        array  $array,
+        string $parent_keys = '',
+        Data $reference_data = null
     ) {
         foreach ($array as $key => $value) {
             // Boundary condition(s).
@@ -138,16 +139,16 @@ class Expander implements LoggerAwareInterface
      * @return mixed
      */
     protected function expandStringProperties(
-        $data,
-        $parent_keys,
-        $reference_data,
-        $value,
-        $key
+        Data   $data,
+        string $parent_keys,
+        ?Data  $reference_data,
+        string $value,
+        string $key
     ) {
         $pattern = '/\$\{([^\$}]+)\}/';
         // We loop through all placeholders in a given string.
         // E.g., '${placeholder1} ${placeholder2}' requires two replacements.
-        while (strpos((string)$value, '${') !== false) {
+        while (str_contains((string) $value, '${')) {
             $original_value = $value;
             $value = preg_replace_callback(
                 $pattern,
@@ -198,10 +199,10 @@ class Expander implements LoggerAwareInterface
      * @return mixed
      */
     public function expandStringPropertiesCallback(
-        $matches,
-        $data,
-        $reference_data = null
-    ) {
+        array $matches,
+        Data  $data,
+        Data $reference_data = null
+    ): mixed {
         $property_name = $matches[1];
         $unexpanded_value = $matches[0];
 
@@ -219,28 +220,28 @@ class Expander implements LoggerAwareInterface
         }
     }
 
-    /**
-     * Searches both the subject data and the reference data for value.
-     *
-     * @param string $property_name
-     *   The name of the value for which to search.
-     * @param string $unexpanded_value
-     *   The original, unexpanded value, containing the placeholder.
-     * @param Data $data
-     *   A data object containing the complete array being operated upon.
-     * @param Data|null $reference_data
-     *   A reference data object. This is not operated upon but is used as a
-     *   reference to provide supplemental values for property expansion.
-     *
-     * @return string
-     *   The expanded string.
-     */
+  /**
+   * Searches both the subject data and the reference data for value.
+   *
+   * @param string $property_name
+   *   The name of the value for which to search.
+   * @param string $unexpanded_value
+   *   The original, unexpanded value, containing the placeholder.
+   * @param Data $data
+   *   A data object containing the complete array being operated upon.
+   * @param Data|null $reference_data
+   *   A reference data object. This is not operated upon but is used as a
+   *   reference to provide supplemental values for property expansion.
+   *
+   * @return string|null The expanded string.
+   *   The expanded string.
+   */
     public function expandPropertyWithReferenceData(
-        $property_name,
-        $unexpanded_value,
-        $data,
-        $reference_data
-    ) {
+        string $property_name,
+        string $unexpanded_value,
+        Data   $data,
+        ?Data $reference_data
+    ): ?string {
         $expanded_value = $this->expandProperty(
             $property_name,
             $unexpanded_value,
@@ -271,9 +272,9 @@ class Expander implements LoggerAwareInterface
      *
      * @return mixed
      */
-    public function expandProperty($property_name, $unexpanded_value, $data)
+    public function expandProperty(string $property_name, string $unexpanded_value, Data $data)
     {
-        if (strpos($property_name, "env.") === 0 &&
+        if (str_starts_with($property_name, "env.") &&
           !$data->has($property_name)) {
             $env_key = substr($property_name, 4);
             if (isset($_SERVER[$env_key])) {
@@ -287,8 +288,7 @@ class Expander implements LoggerAwareInterface
         } else {
             $expanded_value = $data->get($property_name);
             if (is_array($expanded_value)) {
-                $expanded_value = $this->getStringifier()->stringifyArray($expanded_value);
-                return $expanded_value;
+                return $this->getStringifier()->stringifyArray($expanded_value);
             }
             $this->log("Expanding property \${'$property_name'} => $expanded_value.");
             return $expanded_value;
@@ -301,10 +301,8 @@ class Expander implements LoggerAwareInterface
      * @param string $message
      *   The message to log.
      */
-    public function log($message)
+    public function log(string $message)
     {
-        if ($this->getLogger()) {
-            $this->getLogger()->debug($message);
-        }
+        $this->getLogger()?->debug($message);
     }
 }

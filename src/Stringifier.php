@@ -17,7 +17,7 @@ class Stringifier implements StringifierInterface
      * @return string
      *   The resultant string.
      */
-    public static function stringifyArray(array $array)
+    public static function stringifyArray(array $array): string
     {
         return implode(',', $array);
     }
