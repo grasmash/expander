@@ -19,6 +19,11 @@
             "Grasmash\\Expander\\": "src/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Grasmash\\Expander\\Tests\\": "tests/src/"
+        }
+    },
     "require-dev": {
         "phpunit/phpunit": "^9",
         "greg-1-anderson/composer-test-scenarios": "^1",

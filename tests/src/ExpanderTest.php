@@ -1,6 +1,6 @@
 <?php
 
-namespace Grasmash\Expander\Tests\Command;
+namespace Grasmash\Expander\Tests;
 
 use Dflydev\DotAccessData\Data;
 use Grasmash\Expander\Expander;
@@ -47,7 +47,7 @@ class ExpanderTest extends TestCase
      * @return array
      *   An array of values to test.
      */
-    public function providerSourceData()
+    public function providerSourceData(): array
     {
         return [
           [
@@ -122,7 +122,7 @@ class ExpanderTest extends TestCase
     /**
      * @return array
      */
-    public function providerTestExpandProperty()
+    public function providerTestExpandProperty(): array
     {
         return [
             [ ['author' => 'Frank Herbert'], 'author', '${author}', 'Frank Herbert' ],
@@ -130,6 +130,10 @@ class ExpanderTest extends TestCase
         ];
     }
 
+  /**
+   * @param $key
+   * @param $value
+   */
     protected function setEnvVarFixture($key, $value)
     {
         putenv("$key=$value");

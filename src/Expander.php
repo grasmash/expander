@@ -144,7 +144,7 @@ class Expander implements LoggerAwareInterface
         ?Data  $reference_data,
         string $value,
         string $key
-    ) {
+    ): mixed {
         $pattern = '/\$\{([^\$}]+)\}/';
         // We loop through all placeholders in a given string.
         // E.g., '${placeholder1} ${placeholder2}' requires two replacements.
@@ -272,7 +272,7 @@ class Expander implements LoggerAwareInterface
      *
      * @return mixed
      */
-    public function expandProperty(string $property_name, string $unexpanded_value, Data $data)
+    public function expandProperty(string $property_name, string $unexpanded_value, Data $data): mixed
     {
         if (str_starts_with($property_name, "env.") &&
           !$data->has($property_name)) {
