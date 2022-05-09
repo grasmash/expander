@@ -36,6 +36,10 @@
             "@lint",
             "@unit",
             "@cs"
+        ],
+        "coverage": "php -d pcov.enabled=1 vendor/bin/phpunit tests/phpunit --coverage-clover build/logs/clover.xml",
+        "coveralls": [
+            "php-coveralls -vvv"
         ]
     },
     "config": {
