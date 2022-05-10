@@ -277,9 +277,12 @@ class Expander implements LoggerAwareInterface
         if (str_starts_with($property_name, "env.") &&
           !$data->has($property_name)) {
             $env_key = substr($property_name, 4);
-            if (isset($_SERVER[$env_key])) {
-                $data->set($property_name, $_SERVER[$env_key]);
-            }
+          if (isset($_SERVER[$env_key])) {
+            $data->set($property_name, $_SERVER[$env_key]);
+          }
+          elseif (getenv($env_key)) {
+            $data->set($property_name, getenv($env_key));
+          }
         }
 
         if (!$data->has($property_name)) {
