@@ -25,7 +25,7 @@
         }
     },
     "require-dev": {
-        "greg-1-anderson/composer-test-scenarios": "^1",
+        "g1a/composer-test-scenarios": "^3.2.2",
         "php-coveralls/php-coveralls": "^2.5",
         "phpunit/phpunit": "^9",
         "squizlabs/php_codesniffer": "^3.3"
