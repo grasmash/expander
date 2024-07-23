@@ -103,7 +103,7 @@ class Expander implements LoggerAwareInterface
         Data   $data,
         array  $array,
         string $parent_keys = '',
-        Data $reference_data = null
+        ?Data $reference_data = null
     ) {
         foreach ($array as $key => $value) {
             // Boundary condition(s).
@@ -201,7 +201,7 @@ class Expander implements LoggerAwareInterface
     public function expandStringPropertiesCallback(
         array $matches,
         Data  $data,
-        Data $reference_data = null
+        ?Data $reference_data = null
     ): mixed {
         $property_name = $matches[1];
         $unexpanded_value = $matches[0];
