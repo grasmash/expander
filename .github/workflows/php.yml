@@ -35,20 +35,11 @@ jobs:
           # Only report coverage once
           coverage: ${{ matrix.coverage }}
 
-      - name: Validate composer.json and composer.lock
-        run: composer validate --strict
-
-      - name: Cache Composer packages
-        id: composer-cache
-        uses: actions/cache@v4
-        with:
-          path: vendor
-          key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-php-
+      - name: Validate composer.json
+        run: composer validate --strict --no-check-lock
 
       - name: Install dependencies
-        run: composer -n install --prefer-dist -o
+        run: composer -n update --prefer-dist -o
 
       - name: Run test suite
         if: matrix.coverage == 'none'
