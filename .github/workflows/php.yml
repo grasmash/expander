@@ -17,14 +17,17 @@ jobs:
       matrix:
         include:
           - os: "ubuntu-latest"
-            php: "8.0"
+            php: "8.2"
             coverage: "none"
           - os: "ubuntu-latest"
-            php: "8.1"
+            php: "8.3"
+            coverage: "none"
+          - os: "ubuntu-latest"
+            php: "8.4"
             coverage: "pcov"
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -37,7 +40,7 @@ jobs:
 
       - name: Cache Composer packages
         id: composer-cache
-        uses: actions/cache@v3
+        uses: actions/cache@v4
         with:
           path: vendor
           key: ${{ runner.os }}-php-${{ hashFiles('**/composer.lock') }}
