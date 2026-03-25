@@ -3,7 +3,7 @@
     "description": "Expands internal property references in PHP arrays file.",
     "type": "library",
     "require": {
-        "php": ">=8.0",
+        "php": ">=8.2",
         "dflydev/dot-access-data": "^3.0.0",
         "psr/log": "^2 | ^3"
     },
