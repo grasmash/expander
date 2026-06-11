@@ -48,4 +48,9 @@
 */Entity/*~
 
 .idea
-.phpunit.result.cachecomposer.lock
+.phpunit.result.cache
+.phpunit.cache/
+composer.lock
+.DS_Store
+
+build/.phpcs-cache

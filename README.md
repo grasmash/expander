@@ -66,7 +66,7 @@ $array = [
 $expander = new Expander();
 // Optionally set a logger.
 $expander->setLogger(new Psr\Log\NullLogger());
-// Optionally set a Stringfier, used to convert array placeholders into strings. Defaults to using implode() with `,` delimeter.
+// Optionally set a Stringifier, used to convert array placeholders into strings. Defaults to using implode() with `,` delimiter.
 // @see StringifierInterface.
 $expander->setStringifier(new Grasmash\Expander\Stringifier());
 
@@ -74,13 +74,13 @@ $expander->setStringifier(new Grasmash\Expander\Stringifier());
 $expanded = $expander->expandArrayProperties($array);
 
 // Parse an array, expanding references using both internal and supplementary values.
-$reference_properties =  'book' => ['sequel' => 'Dune Messiah'];
+$reference_properties = ['book' => ['sequel' => 'Dune Messiah']];
 // Set an environmental variable.
 putenv("test=gomjabbar");
 $expanded = $expander->expandArrayProperties($array, $reference_properties);
 
 print_r($expanded);
-````
+```
 
 Resultant array:
 
