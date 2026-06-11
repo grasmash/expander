@@ -1,11 +1,24 @@
 {
     "name": "grasmash/expander",
-    "description": "Expands internal property references in PHP arrays file.",
+    "description": "Expands internal property references in PHP arrays.",
     "type": "library",
+    "keywords": [
+        "array",
+        "configuration",
+        "dot-notation",
+        "expansion",
+        "placeholder",
+        "yaml"
+    ],
+    "homepage": "https://github.com/grasmash/expander",
+    "support": {
+        "issues": "https://github.com/grasmash/expander/issues",
+        "source": "https://github.com/grasmash/expander"
+    },
     "require": {
         "php": ">=8.2",
         "dflydev/dot-access-data": "^3.0.0",
-        "psr/log": "^2 | ^3"
+        "psr/log": "^2 || ^3"
     },
     "license": "MIT",
     "authors": [
@@ -25,14 +38,15 @@
         }
     },
     "require-dev": {
-        "greg-1-anderson/composer-test-scenarios": "^1",
-        "php-coveralls/php-coveralls": "^2.5",
-        "phpunit/phpunit": "^9",
-        "squizlabs/php_codesniffer": "^3.3"
+        "php-coveralls/php-coveralls": "^2.8",
+        "phpstan/phpstan": "^2.0",
+        "phpunit/phpunit": "^10.5 || ^11 || ^12 || ^13",
+        "squizlabs/php_codesniffer": "^3.13"
     },
     "scripts": {
         "cs": "phpcs",
         "cbf": "phpcbf",
+        "stan": "phpstan",
         "unit": "phpunit",
         "lint": [
             "find src -name '*.php' -print0 | xargs -0 -n1 php -l",
@@ -41,7 +55,8 @@
         "test": [
             "@lint",
             "@unit",
-            "@cs"
+            "@cs",
+            "@stan"
         ],
         "coverage": "php -d pcov.enabled=1 vendor/bin/phpunit tests/src --coverage-clover build/logs/clover.xml",
         "coveralls": [
@@ -51,10 +66,5 @@
     "config": {
         "optimize-autoloader": true,
         "sort-packages": true
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "4.x-dev"
-        }
     }
 }

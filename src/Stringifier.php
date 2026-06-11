@@ -1,15 +1,16 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Grasmash\Expander;
 
 /**
- * Class Stringifier
- * @package Grasmash\Expander
+ * Converts arrays to strings during property expansion.
  */
 class Stringifier implements StringifierInterface
 {
     /**
-     * Converts array to string.
+     * Converts an array to a comma-delimited string.
      *
      * @param array $array
      *   The array to convert.
@@ -17,7 +18,7 @@ class Stringifier implements StringifierInterface
      * @return string
      *   The resultant string.
      */
-    public static function stringifyArray(array $array): string
+    public function stringifyArray(array $array): string
     {
         return implode(',', $array);
     }

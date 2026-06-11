@@ -1,11 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Grasmash\Expander;
 
 interface StringifierInterface
 {
     /**
-     * Converts array to string.
+     * Converts an array to a string.
      *
      * @param array $array
      *   The array to convert.
@@ -13,5 +15,5 @@ interface StringifierInterface
      * @return string
      *   The resultant string.
      */
-    public static function stringifyArray(array $array): string;
+    public function stringifyArray(array $array): string;
 }

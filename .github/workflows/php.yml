@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, "*.x" ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, "*.x" ]
 
 permissions:
   contents: read
@@ -25,9 +25,12 @@ jobs:
           - os: "ubuntu-latest"
             php: "8.4"
             coverage: "pcov"
+          - os: "ubuntu-latest"
+            php: "8.5"
+            coverage: "none"
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - uses: shivammathur/setup-php@v2
         with:
@@ -40,6 +43,9 @@ jobs:
 
       - name: Install dependencies
         run: composer -n update --prefer-dist -o
+
+      - name: Security audit
+        run: composer audit
 
       - name: Run test suite
         if: matrix.coverage == 'none'
